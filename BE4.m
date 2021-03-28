@@ -125,29 +125,34 @@ function y = HOG(magnitude, orientation)
             
             subplot('Position',position);
             if(cellLimits(1)+cellLimits(4) < H && cellLimits(2)+cellLimits(3)<L)
-                hist = histogram(orientation(cellLimits(1):cellLimits(1)+cellLimits(4),cellLimits(2):cellLimits(2)+cellLimits(3)),nb_bins);
-                hist.Values
+                hist = weightedhist(orientation(cellLimits(1):cellLimits(1)+cellLimits(4),cellLimits(2):cellLimits(2)+cellLimits(3)), magnitude(cellLimits(1):cellLimits(1)+cellLimits(4),cellLimits(2):cellLimits(2)+cellLimits(3)), nb_bins);
             elseif(cellLimits(1)+cellLimits(4) < H)
-                histogram(orientation(cellLimits(1):cellLimits(1)+cellLimits(4),cellLimits(2):L),nb_bins);
+                hist = weightedhist(orientation(cellLimits(1):cellLimits(1)+cellLimits(4),cellLimits(2):L),magnitude(cellLimits(1):cellLimits(1)+cellLimits(4),cellLimits(2):L),nb_bins);
             elseif(cellLimits(2)+cellLimits(3)<L)
-                histogram(orientation(cellLimits(1):H,cellLimits(2):cellLimits(2)+cellLimits(3)),nb_bins);
+                hist = weightedhist(orientation(cellLimits(1):H,cellLimits(2):cellLimits(2)+cellLimits(3)),magnitude(cellLimits(1):H,cellLimits(2):cellLimits(2)+cellLimits(3)),nb_bins);
             else
-                histogram(orientation(cellLimits(1):H,cellLimits(2):L),nb_bins);
+                hist = weightedhist(orientation(cellLimits(1):H,cellLimits(2):L),magnitude(cellLimits(1):H,cellLimits(2):L),nb_bins);
             end
-
+            x = linspace(20,340,nb_bins);
+            bar(x,hist,2);
             set(gca,'visible','off');
             xlim([-10 370]);
         end
     end
 end
 
-
-
-
-
-
-
-
+function hist = weightedhist(values, weight, nb_bins)
+    pas = 360/nb_bins;
+    values = values + (values==0)*1;
+    hist = zeros(nb_bins);
+    [h,l] = size(values);
+    for i=1:h
+        for j=1:l
+            index = ceil(values(i,j)/pas);
+            hist(index) = hist(index) + weight(i,j);
+        end
+    end
+end
 
 
 
