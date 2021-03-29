@@ -6,20 +6,23 @@ affichage_images = false;
 % PARTIE 2
 % Question 1
 % Calcul et affichage des HOG de l'image hog_similar.bmp
+blockHeight = 2;
+blockWidth = 2;
+
 I = imread('Images_HOG_2\hog_similar.bmp');
 imageGauche = I(150-127:150,1:63);
 imageDroite = I(150-127:150,90:153);
 HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
 HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
 
-HoGGauchenormL2 = RHOGnormalisationL2(HoGGauche);
-HoGDroitenormL2 = RHOGnormalisationL2(HoGDroite);
+HoGGauchenormL2 = RHOGnormalisationL2(HoGGauche,blockHeight,blockWidth);
+HoGDroitenormL2 = RHOGnormalisationL2(HoGDroite,blockHeight,blockWidth);
 
-HoGGauchenormL1 = RHOGnormalisationL1(HoGGauche);
-HoGDroitenormL1 = RHOGnormalisationL1(HoGDroite);
+HoGGauchenormL1 = RHOGnormalisationL1(HoGGauche,blockHeight,blockWidth);
+HoGDroitenormL1 = RHOGnormalisationL1(HoGDroite,blockHeight,blockWidth);
 
-HoGGauchenormL1sqrt = RHOGnormalisationL1sqrt(HoGGauche);
-HoGDroitenormL1sqrt = RHOGnormalisationL1sqrt(HoGDroite);
+HoGGauchenormL1sqrt = RHOGnormalisationL1sqrt(HoGGauche,blockHeight,blockWidth);
+HoGDroitenormL1sqrt = RHOGnormalisationL1sqrt(HoGDroite,blockHeight,blockWidth);
 
 similiarityQ1 = cosineSimilarity(HoGGauche,HoGDroite)
 similiarityQ1normL2 = cosineSimilarity(HoGGauchenormL2,HoGDroitenormL2)
@@ -33,14 +36,14 @@ imageDroite = I(150-127:150,91:154);
 HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
 HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
 
-HoGGauchenormL2 = RHOGnormalisationL2(HoGGauche);
-HoGDroitenormL2 = RHOGnormalisationL2(HoGDroite);
+HoGGauchenormL2 = RHOGnormalisationL2(HoGGauche,blockHeight,blockWidth);
+HoGDroitenormL2 = RHOGnormalisationL2(HoGDroite,blockHeight,blockWidth);
 
-HoGGauchenormL1 = RHOGnormalisationL1(HoGGauche);
-HoGDroitenormL1 = RHOGnormalisationL1(HoGDroite);
+HoGGauchenormL1 = RHOGnormalisationL1(HoGGauche,blockHeight,blockWidth);
+HoGDroitenormL1 = RHOGnormalisationL1(HoGDroite,blockHeight,blockWidth);
 
-HoGGauchenormL1sqrt = RHOGnormalisationL1sqrt(HoGGauche);
-HoGDroitenormL1sqrt = RHOGnormalisationL1sqrt(HoGDroite);
+HoGGauchenormL1sqrt = RHOGnormalisationL1sqrt(HoGGauche,blockHeight,blockWidth);
+HoGDroitenormL1sqrt = RHOGnormalisationL1sqrt(HoGDroite,blockHeight,blockWidth);
 
 similiarityQ2 = cosineSimilarity(HoGGauche,HoGDroite)
 similiarityQ2normL2 = cosineSimilarity(HoGGauchenormL2,HoGDroitenormL2)
@@ -219,10 +222,10 @@ function s = euclideanSimilarity(HoG1, HoG2)
     s = sqrt(s);
 end
 
-function y = RHOGnormalisationL2(HoG)
+function y = RHOGnormalisationL2(HoG,bh,bw)
     % Paramètres d'entrée pour R-HoG
-    blockHeight = 2; % in cells
-    blockWidth = 2; % in cells
+    blockHeight = bh; % in cells
+    blockWidth = bw; % in cells
     e = 0.5; % small constant
     
     [m,n,r]=size(HoG);
@@ -247,10 +250,10 @@ function y = RHOGnormalisationL2(HoG)
     y = HoG;
 end
 
-function y = RHOGnormalisationL1(HoG)
+function y = RHOGnormalisationL1(HoG,bh,bw)
     % Paramètres d'entrée pour R-HoG
-    blockHeight = 2; % in cells
-    blockWidth = 2; % in cells
+    blockHeight = bh; % in cells
+    blockWidth = bw; % in cells
     e = 0.5; % small constant
     
     [m,n,r]=size(HoG);
@@ -275,10 +278,10 @@ function y = RHOGnormalisationL1(HoG)
     y = HoG;
 end
 
-function y = RHOGnormalisationL1sqrt(HoG)
+function y = RHOGnormalisationL1sqrt(HoG,bh,bw)
     % Paramètres d'entrée pour R-HoG
-    blockHeight = 2; % in cells
-    blockWidth = 2; % in cells
+    blockHeight = bh; % in cells
+    blockWidth = bw; % in cells
     e = 0.5; % small constant
     
     [m,n,r]=size(HoG);
