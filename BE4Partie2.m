@@ -6,34 +6,62 @@ affichage_images = false;
 % PARTIE 2
 % Question 1
 % Calcul et affichage des HOG de l'image hog_similar.bmp
-% I = imread('Images_HOG_2\hog_similar.bmp');
-% imageGauche = I(150-127:150,1:63);
-% imageDroite = I(150-127:150,90:153);
+I = imread('Images_HOG_2\hog_similar.bmp');
+imageGauche = I(150-127:150,1:63);
+imageDroite = I(150-127:150,90:153);
+HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
+HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
+
+HoGGauchenormL2 = RHOGnormalisationL2(HoGGauche);
+HoGDroitenormL2 = RHOGnormalisationL2(HoGDroite);
+
+HoGGauchenormL1 = RHOGnormalisationL1(HoGGauche);
+HoGDroitenormL1 = RHOGnormalisationL1(HoGDroite);
+
+HoGGauchenormL1sqrt = RHOGnormalisationL1sqrt(HoGGauche);
+HoGDroitenormL1sqrt = RHOGnormalisationL1sqrt(HoGDroite);
+
+similiarityQ1 = cosineSimilarity(HoGGauche,HoGDroite)
+similiarityQ1normL2 = cosineSimilarity(HoGGauchenormL2,HoGDroitenormL2)
+similiarityQ1normL1 = cosineSimilarity(HoGGauchenormL1,HoGDroitenormL1)
+similiarityQ1normL1sqrt = cosineSimilarity(HoGGauchenormL1sqrt,HoGDroitenormL1sqrt)
+%similiarityQ1E = euclideanSimilarity(HoGGauche,HoGDroite)
+
+I = imread('Images_HOG_2\hog_different.bmp');
+imageGauche = I(150-127:150,1:64);
+imageDroite = I(150-127:150,91:154);
+HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
+HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
+
+HoGGauchenormL2 = RHOGnormalisationL2(HoGGauche);
+HoGDroitenormL2 = RHOGnormalisationL2(HoGDroite);
+
+HoGGauchenormL1 = RHOGnormalisationL1(HoGGauche);
+HoGDroitenormL1 = RHOGnormalisationL1(HoGDroite);
+
+HoGGauchenormL1sqrt = RHOGnormalisationL1sqrt(HoGGauche);
+HoGDroitenormL1sqrt = RHOGnormalisationL1sqrt(HoGDroite);
+
+similiarityQ2 = cosineSimilarity(HoGGauche,HoGDroite)
+similiarityQ2normL2 = cosineSimilarity(HoGGauchenormL2,HoGDroitenormL2)
+similiarityQ2normL1 = cosineSimilarity(HoGGauchenormL1,HoGDroitenormL1)
+similiarityQ2normL1sqrt = cosineSimilarity(HoGGauchenormL1sqrt,HoGDroitenormL1sqrt)
+%similiarityQ2E = euclideanSimilarity(HoGGauche,HoGDroite)
+
+% I = imread('Images_HOG_2\hog_similar2.bmp');
+% imageGauche = I(142-127:142,1:64);
+% imageDroite = I(142-127:142,91:154);
 % HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
 % HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
-% similiarityQ1 = cosineSimilarity(HoGGauche,HoGDroite)
+% similiarityQ1b = cosineSimilarity(HoGGauche,HoGDroite)
 % 
-% I = imread('Images_HOG_2\hog_different.bmp');
-% imageGauche = I(150-127:150,1:64);
-% imageDroite = I(150-127:150,91:154);
+% I = imread('Images_HOG_2\hog_different2.bmp');
+% size(I)
+% imageGauche = I(142-127:142,1:64);
+% imageDroite = I(142-127:142,91:154);
 % HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
 % HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
-% similiarityQ2 = cosineSimilarity(HoGGauche,HoGDroite)
-
-I = imread('Images_HOG_2\hog_similar2.bmp');
-imageGauche = I(142-127:142,1:63);
-imageDroite = I(142-127:142,90:153);
-HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
-HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
-similiarityQ1b = cosineSimilarity(HoGGauche,HoGDroite)
-
-I = imread('Images_HOG_2\hog_different2.bmp');
-size(I)
-imageGauche = I(142-127:142,1:64);
-imageDroite = I(142-127:142,91:154);
-HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
-HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
-similiarityQ2b = cosineSimilarity(HoGGauche,HoGDroite)
+% similiarityQ2b = cosineSimilarity(HoGGauche,HoGDroite)
 
 
 % Affichage des images
@@ -178,6 +206,99 @@ function s = cosineSimilarity(HoG1, HoG2)
     s = num/(sqrt(norme1)*sqrt(norme2));
 end
 
+function s = euclideanSimilarity(HoG1, HoG2)
+    [m,n,r]=size(HoG1);
+    s = 0;
+    for i=1:m
+        for j=1:n
+            for k=1:r
+                s = s + (HoG1(i,j,k)-HoG2(i,j,k))^2;
+            end
+        end
+    end
+    s = sqrt(s);
+end
 
+function y = RHOGnormalisationL2(HoG)
+    % Paramètres d'entrée pour R-HoG
+    blockHeight = 2; % in cells
+    blockWidth = 2; % in cells
+    e = 0.5; % small constant
+    
+    [m,n,r]=size(HoG);
+    for i=1:m-blockHeight
+        for j=1:n-blockWidth
+            % Bloc de coin supérieur gauche en (i,j)
+            % Vecteur non-normalisé des histogrammes du block
+            v = HoG(i:i+blockHeight-1,j:j+blockWidth-1,:);
+            normev2 = 0;
+            for a=1:blockHeight
+                for b=1:blockWidth
+                    for k=1:r
+                        normev2 = normev2 + v(a,b,k)^2;
+                    end
+                end
+            end
+            normev2 = sqrt(normev2);
+            v = v/(sqrt(e + normev2^2));
+            HoG(i:i+blockHeight-1,j:j+blockWidth-1,:) = v;
+        end
+    end
+    y = HoG;
+end
 
+function y = RHOGnormalisationL1(HoG)
+    % Paramètres d'entrée pour R-HoG
+    blockHeight = 2; % in cells
+    blockWidth = 2; % in cells
+    e = 0.5; % small constant
+    
+    [m,n,r]=size(HoG);
+    for i=1:m-blockHeight
+        for j=1:n-blockWidth
+            % Bloc de coin supérieur gauche en (i,j)
+            % Vecteur non-normalisé des histogrammes du block
+            v = HoG(i:i+blockHeight-1,j:j+blockWidth-1,:);
+            normev1 = 0;
+            for a=1:blockHeight
+                for b=1:blockWidth
+                    for k=1:r
+                        normev1 = normev1 + abs(v(a,b,k));
+                    end
+                end
+            end
+            normev1 = sqrt(normev1);
+            v = v/(e + normev1);
+            HoG(i:i+blockHeight-1,j:j+blockWidth-1,:) = v;
+        end
+    end
+    y = HoG;
+end
 
+function y = RHOGnormalisationL1sqrt(HoG)
+    % Paramètres d'entrée pour R-HoG
+    blockHeight = 2; % in cells
+    blockWidth = 2; % in cells
+    e = 0.5; % small constant
+    
+    [m,n,r]=size(HoG);
+    for i=1:m-blockHeight
+        for j=1:n-blockWidth
+            % Bloc de coin supérieur gauche en (i,j)
+            % Vecteur non-normalisé des histogrammes du block
+            v = HoG(i:i+blockHeight-1,j:j+blockWidth-1,:);
+            normev1 = 0;
+            for a=1:blockHeight
+                for b=1:blockWidth
+                    for k=1:r
+                        normev1 = normev1 + abs(v(a,b,k));
+                    end
+                end
+            end
+            normev1 = sqrt(normev1);
+            v = v/(e + normev1);
+            HoG(i:i+blockHeight-1,j:j+blockWidth-1,:) = sqrt(v);
+        end
+    end
+    y = HoG;
+end
