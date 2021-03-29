@@ -1,8 +1,6 @@
 clear
 close all
 
-affichage_images = false;
-
 % PARTIE 2
 % Question 1
 % Calcul et affichage des HOG de l'image hog_similar.bmp
@@ -12,64 +10,23 @@ blockWidth = 2;
 I = imread('Images_HOG_2\hog_similar.bmp');
 imageGauche = I(150-127:150,1:63);
 imageDroite = I(150-127:150,90:153);
-HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
-HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
-
-HoGGauchenormL2 = RHOGnormalisationL2(HoGGauche,blockHeight,blockWidth);
-HoGDroitenormL2 = RHOGnormalisationL2(HoGDroite,blockHeight,blockWidth);
-
-HoGGauchenormL1 = RHOGnormalisationL1(HoGGauche,blockHeight,blockWidth);
-HoGDroitenormL1 = RHOGnormalisationL1(HoGDroite,blockHeight,blockWidth);
-
-HoGGauchenormL1sqrt = RHOGnormalisationL1sqrt(HoGGauche,blockHeight,blockWidth);
-HoGDroitenormL1sqrt = RHOGnormalisationL1sqrt(HoGDroite,blockHeight,blockWidth);
-
-similiarityQ1 = cosineSimilarity(HoGGauche,HoGDroite)
-similiarityQ1normL2 = cosineSimilarity(HoGGauchenormL2,HoGDroitenormL2)
-similiarityQ1normL1 = cosineSimilarity(HoGGauchenormL1,HoGDroitenormL1)
-similiarityQ1normL1sqrt = cosineSimilarity(HoGGauchenormL1sqrt,HoGDroitenormL1sqrt)
-%similiarityQ1E = euclideanSimilarity(HoGGauche,HoGDroite)
+calculSimilarite(imageGauche, imageDroite, blockHeight, blockWidth);
 
 I = imread('Images_HOG_2\hog_different.bmp');
 imageGauche = I(150-127:150,1:64);
 imageDroite = I(150-127:150,91:154);
-HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
-HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
-
-HoGGauchenormL2 = RHOGnormalisationL2(HoGGauche,blockHeight,blockWidth);
-HoGDroitenormL2 = RHOGnormalisationL2(HoGDroite,blockHeight,blockWidth);
-
-HoGGauchenormL1 = RHOGnormalisationL1(HoGGauche,blockHeight,blockWidth);
-HoGDroitenormL1 = RHOGnormalisationL1(HoGDroite,blockHeight,blockWidth);
-
-HoGGauchenormL1sqrt = RHOGnormalisationL1sqrt(HoGGauche,blockHeight,blockWidth);
-HoGDroitenormL1sqrt = RHOGnormalisationL1sqrt(HoGDroite,blockHeight,blockWidth);
-
-similiarityQ2 = cosineSimilarity(HoGGauche,HoGDroite)
-similiarityQ2normL2 = cosineSimilarity(HoGGauchenormL2,HoGDroitenormL2)
-similiarityQ2normL1 = cosineSimilarity(HoGGauchenormL1,HoGDroitenormL1)
-similiarityQ2normL1sqrt = cosineSimilarity(HoGGauchenormL1sqrt,HoGDroitenormL1sqrt)
-%similiarityQ2E = euclideanSimilarity(HoGGauche,HoGDroite)
+calculSimilarite(imageGauche, imageDroite, blockHeight, blockWidth);
 
 % I = imread('Images_HOG_2\hog_similar2.bmp');
 % imageGauche = I(142-127:142,1:64);
 % imageDroite = I(142-127:142,91:154);
-% HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
-% HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
-% similiarityQ1b = cosineSimilarity(HoGGauche,HoGDroite)
+% calculSimilarite(imageGauche, imageDroite, blockHeight, blockWidth);
 % 
 % I = imread('Images_HOG_2\hog_different2.bmp');
 % size(I)
 % imageGauche = I(142-127:142,1:64);
 % imageDroite = I(142-127:142,91:154);
-% HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
-% HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
-% similiarityQ2b = cosineSimilarity(HoGGauche,HoGDroite)
-
-
-% Affichage des images
-if affichage_images
-end
+% calculSimilarite(imageGauche, imageDroite, blockHeight, blockWidth);
 
 % Fonctions
 function m = getMagnitude(I)
@@ -150,7 +107,7 @@ function y = HOG(magnitude, orientation)
     % Parcours des cellules
     % figure();
     [H,L]=size(orientation); 
-    y = zeros(round(H/cellHeight),round(L/cellWidth),9);
+    y = zeros(round(H/cellHeight),round(L/cellWidth),nb_bins);
     for i = 1:round(H/cellHeight)
         for j = 1:round(L/cellWidth)
             cellLimits = [(i-1)*cellHeight+1 (j-1)*cellWidth+1 cellWidth cellHeight];
@@ -229,8 +186,8 @@ function y = RHOGnormalisationL2(HoG,bh,bw)
     e = 0.5; % small constant
     
     [m,n,r]=size(HoG);
-    for i=1:m-blockHeight
-        for j=1:n-blockWidth
+    for i=1:m-blockHeight:blockHeight
+        for j=1:n-blockWidth:blockWidth
             % Bloc de coin supérieur gauche en (i,j)
             % Vecteur non-normalisé des histogrammes du block
             v = HoG(i:i+blockHeight-1,j:j+blockWidth-1,:);
@@ -304,4 +261,24 @@ function y = RHOGnormalisationL1sqrt(HoG,bh,bw)
         end
     end
     y = HoG;
+end
+
+function calculSimilarite(imageGauche, imageDroite, blockHeight, blockWidth)
+    HoGGauche = HOG(getMagnitude(imageGauche), getOrientation(imageGauche));
+    HoGDroite = HOG(getMagnitude(imageDroite), getOrientation(imageDroite));
+
+    HoGGauchenormL2 = RHOGnormalisationL2(HoGGauche,blockHeight,blockWidth);
+    HoGDroitenormL2 = RHOGnormalisationL2(HoGDroite,blockHeight,blockWidth);
+
+    HoGGauchenormL1 = RHOGnormalisationL1(HoGGauche,blockHeight,blockWidth);
+    HoGDroitenormL1 = RHOGnormalisationL1(HoGDroite,blockHeight,blockWidth);
+
+    HoGGauchenormL1sqrt = RHOGnormalisationL1sqrt(HoGGauche,blockHeight,blockWidth);
+    HoGDroitenormL1sqrt = RHOGnormalisationL1sqrt(HoGDroite,blockHeight,blockWidth);
+
+    similiarity = cosineSimilarity(HoGGauche,HoGDroite)
+    similiaritynormL2 = cosineSimilarity(HoGGauchenormL2,HoGDroitenormL2)
+    similiaritynormL1 = cosineSimilarity(HoGGauchenormL1,HoGDroitenormL1)
+    similiaritynormL1sqrt = cosineSimilarity(HoGGauchenormL1sqrt,HoGDroitenormL1sqrt)
+    similiarityEucli = euclideanSimilarity(HoGGauche,HoGDroite)
 end
